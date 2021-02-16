@@ -62,9 +62,10 @@ namespace App\Models{
  * @property int $price
  * @property string|null $sku
  * @property string $url
- * @property int $in_stock
+ * @property bool $in_stock
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read \App\Models\Retailer $retailer
  * @method static \Illuminate\Database\Eloquent\Builder|Stock newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Stock newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Stock query()
