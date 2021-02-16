@@ -2,6 +2,11 @@
 
 namespace App\Models;
 
+use App\Clients\Target;
+use App\Clients\BestBuy;
+use Illuminate\Support\Str;
+use Facades\App\Clients\ClientFactory;
+use App\Clients\ClientException;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -21,19 +26,13 @@ class Stock extends Model
 
     public function track()
     {
+        $status = $this->retailer->client()
+            ->checkAvailability($this);
 
-        if ($this->retailer->name === 'Best Buy') {
-            // Hit an API endpoint for the associated retailer
-            // Fetch the up-to-date details for the item
-            $results = Http::get('http://foo.test')->json();
-
-            // And then refresh the current stock record.
-            $this->update([
-                'in_stock' => $results['available'],
-                'price' => $results['price'],
-            ]);
-        }
-
+        $this->update([
+            'in_stock' => $status->available,
+            'price' => $status->price,
+        ]);
 
     }
 
