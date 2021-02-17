@@ -13,7 +13,7 @@ class BestBuy implements Client
 
         // what happens if the API changes?
         // unset($results['salePrice']);
-
+        // dd($results['onlineAvailability']);
         return new StockStatus(
             $results['onlineAvailability'],
             $this->dollarsToCents($results['salePrice'])
