@@ -2,9 +2,10 @@
 
 namespace Tests\Clients;
 
-use App\Clients\BestBuy;
 use Tests\TestCase;
 use App\Models\Stock;
+use App\Clients\BestBuy;
+use Illuminate\Support\Facades\Http;
 use Database\Seeders\RetailerWithProductSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
@@ -29,7 +30,7 @@ class BestBuyTest extends TestCase
         try {
             (new BestBuy())->checkAvailability($stock);
         } catch (\Exception $e) {
-            $this->fail('Failed to track the BestBuy API properly.');
+            $this->fail('Failed to track the BestBuy API properly. ' . $e->getMessage());
         }
         // it should return the appropriate StockStatus
         // StockStatus.available = true
@@ -37,5 +38,16 @@ class BestBuyTest extends TestCase
         // whether the exception is thrown. So we just force a pass as long as
         // it doesn't throw an exception
         $this->assertTrue(true);
+    }
+
+    /** @test */
+    public function it_creates_the_proper_stock_status_response()
+    {
+        Http::fake(fn() => ['salePrice' => 299.99, 'onlineAvailability' => true]);
+
+        $stockStatus = (new BestBuy())->checkAvailability(new Stock);
+
+        $this->assertEquals(29999, $stockStatus->price);
+        $this->assertTrue($stockStatus->available);
     }
 }

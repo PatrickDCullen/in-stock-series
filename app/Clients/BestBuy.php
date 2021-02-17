@@ -11,9 +11,12 @@ class BestBuy implements Client
     {
         $results = Http::get($this->endpoint($stock->sku))->json();
 
+        // what happens if the API changes?
+        // unset($results['salePrice']);
+
         return new StockStatus(
             $results['onlineAvailability'],
-            (int) ($results['salePrice'] * 100)
+            $this->dollarsToCents($results['salePrice'])
         );
     }
 
@@ -23,5 +26,10 @@ class BestBuy implements Client
 
         return "https://api.bestbuy.com/v1/products/{$sku}.json?apiKey={$key}";
 
+    }
+
+    private function dollarsToCents($salePrice)
+    {
+        return (int) ($salePrice * 100);
     }
 }
